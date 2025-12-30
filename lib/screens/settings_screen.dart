@@ -990,7 +990,6 @@ class _CommunityNodeSheetState extends State<_CommunityNodeSheet> {
                       SizedBox(height: 8),
                       _PrivacyItem(text: 'Payment amounts'),
                       _PrivacyItem(text: 'Payment destinations (invoices)'),
-                      _PrivacyItem(text: 'Your IP address (if not using VPN/Tor)'),
                       SizedBox(height: 12),
                       Text(
                         'The node operator cannot access your wallet, seed phrase, or on-chain funds.',
@@ -1636,6 +1635,7 @@ class _ConnectNodeScreenState extends State<ConnectNodeScreen> {
               title: 'Your Liquidity',
               description: 'Payments route through your 10M+ sat channels',
             ),
+            const SizedBox(height: 40),
           ],
         ),
       ),

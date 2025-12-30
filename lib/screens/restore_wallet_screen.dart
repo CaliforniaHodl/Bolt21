@@ -157,17 +157,13 @@ class _RestoreWalletScreenState extends State<RestoreWalletScreen> {
       await Future.delayed(const Duration(milliseconds: 500));
 
       if (mounted) {
-        // Show success message with balance
-        final balance = wallet.totalBalanceSats;
-        final paymentCount = wallet.payments.length;
-
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
-              'Wallet restored! Balance: $balance sats, $paymentCount transactions found.',
+              'Wallet restored! Pull down to refresh balance.',
             ),
             backgroundColor: Bolt21Theme.success,
-            duration: const Duration(seconds: 3),
+            duration: Duration(seconds: 3),
           ),
         );
 
