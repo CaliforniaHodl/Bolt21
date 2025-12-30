@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_breez_liquid/flutter_breez_liquid.dart';
 import 'package:provider/provider.dart';
 import '../providers/wallet_provider.dart';
+import '../services/app_update_service.dart';
 import '../services/operation_state_service.dart';
 import '../services/price_service.dart';
 import '../utils/formatters.dart';
@@ -178,12 +179,21 @@ class _BalanceCardState extends State<_BalanceCard> {
   void initState() {
     super.initState();
     _loadPrice();
+    _checkForUpdates();
   }
 
   Future<void> _loadPrice() async {
     await PriceService.instance.fetchBtcPrice();
     if (mounted) {
       setState(() => _priceLoaded = true);
+    }
+  }
+
+  Future<void> _checkForUpdates() async {
+    // Delay slightly to ensure context is ready
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (mounted) {
+      await AppUpdateService.checkForUpdate(context);
     }
   }
 
