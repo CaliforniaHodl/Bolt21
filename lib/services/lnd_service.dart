@@ -2,6 +2,38 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/secure_logger.dart';
 
+/// SECURITY: Safe integer parsing to prevent overflow attacks from malicious LND nodes
+/// Clamps values to safe range and handles malformed input gracefully
+int _safeParseInt(dynamic value, {int defaultValue = 0, int maxValue = 2100000000000000}) {
+  if (value == null) return defaultValue;
+
+  final str = value.toString();
+  if (str.isEmpty) return defaultValue;
+
+  // Try parsing as BigInt first to detect overflow
+  try {
+    final bigValue = BigInt.tryParse(str);
+    if (bigValue == null) return defaultValue;
+
+    // Check for negative values (shouldn't happen for balances/amounts)
+    if (bigValue.isNegative) {
+      SecureLogger.warn('Negative value rejected: $str', tag: 'LND');
+      return defaultValue;
+    }
+
+    // Clamp to max sats (21M BTC = 2.1 quadrillion sats)
+    if (bigValue > BigInt.from(maxValue)) {
+      SecureLogger.warn('Value exceeds maximum, clamped: $str -> $maxValue', tag: 'LND');
+      return maxValue;
+    }
+
+    return bigValue.toInt();
+  } catch (e) {
+    SecureLogger.warn('Failed to parse int: $str', tag: 'LND');
+    return defaultValue;
+  }
+}
+
 /// Service for connecting to a remote LND node via REST API
 class LndService {
   String? _restUrl;
@@ -56,12 +88,13 @@ class LndService {
     final walletBalance = await _get('/v1/balance/blockchain');
     final channelBalance = await _get('/v1/balance/channels');
 
+    // SECURITY: Use safe parsing to prevent integer overflow attacks
     return LndBalance(
-      onChainConfirmed: int.parse(walletBalance['confirmed_balance'] ?? '0'),
-      onChainUnconfirmed: int.parse(walletBalance['unconfirmed_balance'] ?? '0'),
-      channelLocal: int.parse(channelBalance['local_balance']?['sat'] ?? '0'),
-      channelRemote: int.parse(channelBalance['remote_balance']?['sat'] ?? '0'),
-      channelPending: int.parse(channelBalance['pending_open_local_balance']?['sat'] ?? '0'),
+      onChainConfirmed: _safeParseInt(walletBalance['confirmed_balance']),
+      onChainUnconfirmed: _safeParseInt(walletBalance['unconfirmed_balance']),
+      channelLocal: _safeParseInt(channelBalance['local_balance']?['sat']),
+      channelRemote: _safeParseInt(channelBalance['remote_balance']?['sat']),
+      channelPending: _safeParseInt(channelBalance['pending_open_local_balance']?['sat']),
     );
   }
 
@@ -107,11 +140,12 @@ class LndService {
       throw LndPaymentException(error);
     }
 
+    // SECURITY: Use safe parsing for payment results
     return LndPaymentResult(
       paymentHash: response['payment_hash'] as String,
       paymentPreimage: response['payment_preimage'] as String,
-      feeSat: int.parse(response['payment_route']?['total_fees'] ?? '0'),
-      amountSat: int.parse(response['payment_route']?['total_amt'] ?? '0'),
+      feeSat: _safeParseInt(response['payment_route']?['total_fees']),
+      amountSat: _safeParseInt(response['payment_route']?['total_amt']),
     );
   }
 
@@ -119,13 +153,14 @@ class LndService {
   Future<LndDecodedInvoice> decodeInvoice(String paymentRequest) async {
     final response = await _get('/v1/payreq/$paymentRequest');
 
+    // SECURITY: Use safe parsing for invoice data
     return LndDecodedInvoice(
       destination: response['destination'] as String,
       paymentHash: response['payment_hash'] as String,
-      amountSat: int.parse(response['num_satoshis'] ?? '0'),
+      amountSat: _safeParseInt(response['num_satoshis']),
       description: response['description'] as String? ?? '',
-      expiry: int.parse(response['expiry'] ?? '3600'),
-      timestamp: int.parse(response['timestamp'] ?? '0'),
+      expiry: _safeParseInt(response['expiry'], defaultValue: 3600),
+      timestamp: _safeParseInt(response['timestamp']),
     );
   }
 
@@ -145,7 +180,7 @@ class LndService {
     return invoices.map((i) => LndInvoice.fromJson(i)).toList();
   }
 
-  /// HTTP GET request
+  /// HTTP GET request with defensive JSON parsing
   Future<Map<String, dynamic>> _get(String path) async {
     _ensureConfigured();
 
@@ -158,10 +193,20 @@ class LndService {
       throw LndApiException('GET $path failed: ${response.statusCode} ${response.body}');
     }
 
-    return jsonDecode(response.body) as Map<String, dynamic>;
+    // SECURITY: Defensive JSON parsing to prevent crash on malformed response
+    try {
+      final decoded = jsonDecode(response.body);
+      if (decoded is! Map<String, dynamic>) {
+        throw LndApiException('GET $path: Invalid response type (expected object)');
+      }
+      return decoded;
+    } on FormatException catch (e) {
+      SecureLogger.error('GET $path: Malformed JSON response', error: e, tag: 'LND');
+      throw LndApiException('GET $path: Malformed JSON response');
+    }
   }
 
-  /// HTTP POST request
+  /// HTTP POST request with defensive JSON parsing
   Future<Map<String, dynamic>> _post(String path, Map<String, dynamic> body) async {
     _ensureConfigured();
 
@@ -175,7 +220,17 @@ class LndService {
       throw LndApiException('POST $path failed: ${response.statusCode} ${response.body}');
     }
 
-    return jsonDecode(response.body) as Map<String, dynamic>;
+    // SECURITY: Defensive JSON parsing to prevent crash on malformed response
+    try {
+      final decoded = jsonDecode(response.body);
+      if (decoded is! Map<String, dynamic>) {
+        throw LndApiException('POST $path: Invalid response type (expected object)');
+      }
+      return decoded;
+    } on FormatException catch (e) {
+      SecureLogger.error('POST $path: Malformed JSON response', error: e, tag: 'LND');
+      throw LndApiException('POST $path: Malformed JSON response');
+    }
   }
 
   Map<String, String> get _headers => {
@@ -294,11 +349,12 @@ class LndPayment {
   });
 
   factory LndPayment.fromJson(Map<String, dynamic> json) {
+    // SECURITY: Use safe parsing for all numeric fields
     return LndPayment(
       paymentHash: json['payment_hash'] as String? ?? '',
-      amountSat: int.parse(json['value_sat'] ?? '0'),
-      feeSat: int.parse(json['fee_sat'] ?? '0'),
-      creationTime: int.parse(json['creation_time_ns'] ?? '0') ~/ 1000000000,
+      amountSat: _safeParseInt(json['value_sat']),
+      feeSat: _safeParseInt(json['fee_sat']),
+      creationTime: _safeParseInt(json['creation_time_ns']) ~/ 1000000000,
       status: json['status'] as String? ?? 'UNKNOWN',
     );
   }
@@ -326,13 +382,14 @@ class LndInvoice {
   });
 
   factory LndInvoice.fromJson(Map<String, dynamic> json) {
+    // SECURITY: Use safe parsing for all numeric fields
     return LndInvoice(
       paymentRequest: json['payment_request'] as String? ?? '',
       paymentHash: json['r_hash'] as String? ?? '',
-      amountSat: int.parse(json['value'] ?? '0'),
-      amountPaidSat: int.parse(json['amt_paid_sat'] ?? '0'),
+      amountSat: _safeParseInt(json['value']),
+      amountPaidSat: _safeParseInt(json['amt_paid_sat']),
       memo: json['memo'] as String? ?? '',
-      creationDate: int.parse(json['creation_date'] ?? '0'),
+      creationDate: _safeParseInt(json['creation_date']),
       settled: json['settled'] as bool? ?? false,
     );
   }
