@@ -38,6 +38,13 @@ Bolt21 underwent a comprehensive security audit covering mobile application secu
 | P1 | Biometric bypass via split payments | ✅ Fixed |
 | P1 | TrustKit version pinning | ✅ Fixed |
 
+### Intentional Exceptions
+
+| Finding | Decision | Rationale |
+|---------|----------|-----------|
+| CoinGecko certificate pinning | Not pinned | CoinGecko rotates certificates frequently, making pinning impractical. Price data is display-only and cannot affect fund security. |
+| LND node connection | User-controlled | Users connect to their own LND nodes. They control both endpoints of the connection. |
+
 ### Security Strengths
 
 The audit identified several strong security practices:
