@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/wallet_metadata.dart';
 import '../utils/encryption_helper.dart';
 import '../utils/secure_logger.dart';
+import '../utils/secure_string.dart';
 
 /// Secure storage for sensitive wallet data
 ///
@@ -135,6 +136,16 @@ class SecureStorageService {
   /// Get mnemonic for a specific wallet
   static Future<String?> getMnemonic({required String walletId}) async {
     return await _storage.read(key: _mnemonicKey(walletId));
+  }
+
+  /// Get mnemonic as SecureString for memory-safe handling
+  /// SECURITY: Returns SecureString to prevent mnemonic from persisting
+  /// in memory as an immutable Dart String. Caller MUST call dispose()
+  /// after use to wipe the mnemonic from memory.
+  static Future<SecureString?> getSecureMnemonic({required String walletId}) async {
+    final mnemonic = await _storage.read(key: _mnemonicKey(walletId));
+    if (mnemonic == null) return null;
+    return SecureString.fromString(mnemonic);
   }
 
   /// Save on-chain address for a specific wallet

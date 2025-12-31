@@ -5,14 +5,19 @@ import 'package:mocktail/mocktail.dart';
 import 'package:bolt21/models/wallet_metadata.dart';
 import 'package:bolt21/screens/home_screen.dart';
 import 'package:bolt21/providers/wallet_provider.dart';
+import 'package:bolt21/services/community_node_service.dart';
 import 'package:bolt21/services/lightning_service.dart';
+import 'package:bolt21/services/lnd_service.dart';
 import 'package:bolt21/services/operation_state_service.dart';
+import 'package:bolt21/utils/secure_string.dart';
 import 'package:bolt21/utils/theme.dart';
 import 'package:flutter_breez_liquid/flutter_breez_liquid.dart';
 
 // Mock classes
 class MockLightningService extends Mock implements LightningService {}
 class MockOperationStateService extends Mock implements OperationStateService {}
+class MockLndService extends Mock implements LndService {}
+class MockCommunityNodeService extends Mock implements CommunityNodeService {}
 
 // Test helper to wrap widget with necessary providers
 Widget createTestWidget(Widget child, {WalletProvider? wallet}) {
@@ -98,7 +103,16 @@ class TestWalletProvider extends ChangeNotifier implements WalletProvider {
   @override Future<void> renameWallet(String walletId, String newName) async {}
   @override Future<void> deleteWallet(String walletId) async {}
   @override Future<String?> getMnemonic({String? walletId}) async => 'test mnemonic';
+  @override Future<SecureString?> getSecureMnemonic({String? walletId}) async => SecureString.fromString('test mnemonic');
   @override String generateMnemonic() => 'test mnemonic';
+  @override Future<String?> generateBolt11Invoice({required BigInt amountSat, String? description}) async => 'lnbc1test...';
+  @override Future<void> refreshLndConnection() async {}
+  @override Future<String?> sendPaymentViaCommunityNode(String destination, {BigInt? amountSat, bool? useCommunityNode}) async => 'op_123';
+  @override bool get isLndConnected => false;
+  @override LndBalance? get lndBalance => null;
+  @override LndNodeInfo? get lndNodeInfo => null;
+  @override LndService get lndService => MockLndService();
+  @override CommunityNodeService get communityNodeService => MockCommunityNodeService();
   @override Future<void> refreshAll() async { notifyListeners(); }
   @override Future<String?> generateOnChainAddress() async => 'bc1qtest...';
   @override Future<String?> generateBolt12Offer() async => 'lno1test...';

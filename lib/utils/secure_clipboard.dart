@@ -11,6 +11,10 @@ class SecureClipboard {
   static Timer? _clearTimer;
   static int _copyId = 0; // Track copy operations to prevent race conditions
 
+  /// Default timeout for sensitive data like mnemonics
+  /// SECURITY: Centralized constant to ensure UI message matches actual timeout
+  static const Duration defaultSensitiveTimeout = Duration(seconds: 30);
+
   /// Copy sensitive data with auto-clear and security warning
   ///
   /// Shows a warning dialog explaining clipboard risks, then copies
@@ -18,7 +22,7 @@ class SecureClipboard {
   static Future<void> copyWithTimeout(
     BuildContext context,
     String text, {
-    Duration timeout = const Duration(seconds: 30),
+    Duration timeout = defaultSensitiveTimeout,
     bool showWarning = true,
   }) async {
     if (showWarning) {
@@ -38,9 +42,9 @@ class SecureClipboard {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Your recovery phrase will be copied to clipboard for ${30} seconds.',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                Text(
+                  'Your recovery phrase will be copied to clipboard for ${timeout.inSeconds} seconds.',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
                 const Text('⚠️ SECURITY RISKS:', style: TextStyle(fontWeight: FontWeight.bold)),

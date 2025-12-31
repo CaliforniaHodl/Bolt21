@@ -5,6 +5,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart' show SharePlus, ShareParams;
 import '../providers/wallet_provider.dart';
 import '../services/screenshot_service.dart';
+import '../utils/secure_clipboard.dart';
 import '../utils/theme.dart';
 
 class ReceiveScreen extends StatefulWidget {
@@ -597,15 +598,14 @@ class _QrCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Long-press QR code to copy
+            // Long-press QR code to copy (with auto-clear for security)
             GestureDetector(
-              onLongPress: () {
-                Clipboard.setData(ClipboardData(text: dataToCopy));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Copied to clipboard'),
-                    backgroundColor: Bolt21Theme.success,
-                  ),
+              onLongPress: () async {
+                await SecureClipboard.copyWithTimeout(
+                  context,
+                  dataToCopy,
+                  timeout: const Duration(seconds: 60),
+                  showWarning: false, // Not sensitive like mnemonics
                 );
                 // Haptic feedback
                 HapticFeedback.mediumImpact();
@@ -671,13 +671,12 @@ class _ActionButtons extends StatelessWidget {
       children: [
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: data));
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Copied to clipboard'),
-                  backgroundColor: Bolt21Theme.success,
-                ),
+            onPressed: () async {
+              await SecureClipboard.copyWithTimeout(
+                context,
+                data,
+                timeout: const Duration(seconds: 60),
+                showWarning: false, // Not sensitive like mnemonics
               );
             },
             icon: const Icon(Icons.copy),

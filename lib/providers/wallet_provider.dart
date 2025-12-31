@@ -10,6 +10,7 @@ import '../services/operation_state_service.dart';
 import '../services/secure_storage_service.dart';
 import '../utils/retry_helper.dart';
 import '../utils/secure_logger.dart';
+import '../utils/secure_string.dart';
 
 /// Wallet state management with multi-wallet support
 class WalletProvider extends ChangeNotifier {
@@ -145,20 +146,25 @@ class WalletProvider extends ChangeNotifier {
       // Initialize operation state tracking
       await _operationStateService.initialize();
 
-      // Get mnemonic for active wallet
-      final mnemonic = await SecureStorageService.getMnemonic(
+      // SECURITY: Get mnemonic as SecureString for memory-safe handling
+      final secureMnemonic = await SecureStorageService.getSecureMnemonic(
         walletId: _activeWallet!.id,
       );
 
-      if (mnemonic == null) {
+      if (secureMnemonic == null || secureMnemonic.isEmpty) {
         throw Exception('Mnemonic not found for wallet ${_activeWallet!.name}');
       }
 
-      // Initialize Lightning service with wallet-specific directory
-      await _lightningService.initialize(
-        walletId: _activeWallet!.id,
-        mnemonic: mnemonic,
-      );
+      try {
+        // Initialize Lightning service with wallet-specific directory
+        await _lightningService.initialize(
+          walletId: _activeWallet!.id,
+          mnemonic: secureMnemonic.value,
+        );
+      } finally {
+        // SECURITY: Wipe mnemonic from memory after SDK has consumed it
+        secureMnemonic.dispose();
+      }
 
       _isInitialized = true;
       await _refreshAll();
@@ -625,10 +631,19 @@ class WalletProvider extends ChangeNotifier {
   }
 
   /// Get mnemonic for a specific wallet (for recovery phrase display)
+  /// DEPRECATED: Use getSecureMnemonic() for memory-safe handling
   Future<String?> getMnemonic({String? walletId}) async {
     final id = walletId ?? _activeWallet?.id;
     if (id == null) return null;
     return SecureStorageService.getMnemonic(walletId: id);
+  }
+
+  /// Get mnemonic as SecureString for memory-safe handling
+  /// SECURITY: Caller MUST call dispose() after use to wipe from memory
+  Future<SecureString?> getSecureMnemonic({String? walletId}) async {
+    final id = walletId ?? _activeWallet?.id;
+    if (id == null) return null;
+    return SecureStorageService.getSecureMnemonic(walletId: id);
   }
 
   /// Generate a new mnemonic (for create wallet flow)

@@ -662,7 +662,7 @@ class _NodeInfoSheet extends StatelessWidget {
                     ? Bolt21Theme.success
                     : Bolt21Theme.error,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 40),
             ],
           ),
         );
@@ -713,13 +713,13 @@ class _InfoRow extends StatelessWidget {
             if (copyable)
               IconButton(
                 icon: const Icon(Icons.copy, size: 18),
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: value));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Copied'),
-                      backgroundColor: Bolt21Theme.success,
-                    ),
+                onPressed: () async {
+                  // SECURITY: Use SecureClipboard with auto-clear for node config data
+                  await SecureClipboard.copyWithTimeout(
+                    context,
+                    value,
+                    timeout: const Duration(seconds: 45),
+                    showWarning: false, // Node config less sensitive than mnemonic
                   );
                 },
               ),
