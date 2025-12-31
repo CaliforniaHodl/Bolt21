@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Running a Bitcoin Node: Complete Guide to Network Participation in 2026"
 description: "Learn how to run your own Bitcoin full node for privacy, security, and network support. Complete setup guide for Bitcoin Core and alternatives in 2026."
 date: 2026-06-16

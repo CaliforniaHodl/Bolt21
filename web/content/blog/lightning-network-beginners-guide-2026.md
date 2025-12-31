@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Lightning Network for Beginners: A Complete Guide to Instant Bitcoin Payments"
 description: "Learn how the Lightning Network enables instant, low-fee Bitcoin transactions. Complete beginner guide to understanding Layer 2 Bitcoin payments in 2026."
 date: 2026-03-10

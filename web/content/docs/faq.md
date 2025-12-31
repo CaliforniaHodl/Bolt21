@@ -1,5 +1,6 @@
 ---
 title: 'FAQ'
+priority: 0.6
 description: 'Frequently asked questions about Bolt21. Learn about wallet security, recovery phrases, Lightning payments, BOLT12 offers, and receiving Ocean mining payouts.'
 layout: 'docs'
 weight: 3

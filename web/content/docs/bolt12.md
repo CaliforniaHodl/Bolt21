@@ -1,5 +1,6 @@
 ---
 title: 'Understanding BOLT12'
+priority: 0.6
 description: 'What is BOLT12 and why it matters for Lightning payments. Learn how BOLT12 offers enable reusable payment addresses that never expire, perfect for mining payouts.'
 layout: 'docs'
 weight: 2

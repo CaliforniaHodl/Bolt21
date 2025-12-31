@@ -3,6 +3,7 @@ title: 'Documentation'
 description: 'Learn how to use Bolt21, set up your self-custodial wallet, receive Lightning payments, configure Ocean mining payouts, and master BOLT12 offers.'
 layout: 'docs'
 css: ['docs.css']
+priority: 0.8
 ---
 
 # Bolt21 Documentation

@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Bitcoin Self-Custody: Why 'Not Your Keys, Not Your Coins' Matters in 2026"
 description: "Complete guide to Bitcoin self-custody. Learn why controlling your private keys is essential and how to safely manage your Bitcoin in 2026."
 date: 2026-03-17

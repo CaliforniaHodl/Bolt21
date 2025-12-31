@@ -1,5 +1,6 @@
 ---
 title: 'Wallet Management'
+priority: 0.6
 description: 'Learn how to create, backup, switch between, and delete wallets in Bolt21. Manage multiple Bitcoin Lightning wallets securely.'
 layout: 'docs'
 weight: 5

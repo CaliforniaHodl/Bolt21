@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Lightning Channel Management: Mastering Liquidity and Routing in 2026"
 description: "Learn Lightning Network channel management including liquidity balancing, channel capacity, routing optimization, and automated solutions for 2026."
 date: 2026-04-07

@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Bitcoin Payments for Merchants: Complete 2024 Guide"
 description: "Learn how to accept Bitcoin payments as a merchant. Compare payment processors, understand Lightning vs on-chain, reduce fees, and avoid common pitfalls."
 date: 2024-12-08

@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Bitcoin Inheritance Planning: Securing Your Digital Assets for Future Generations"
 description: "Complete guide to Bitcoin inheritance planning including multisig solutions, legal considerations, and ensuring loved ones can access your Bitcoin in 2026."
 date: 2026-05-12

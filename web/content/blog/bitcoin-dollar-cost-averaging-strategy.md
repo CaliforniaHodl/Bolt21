@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Bitcoin Dollar-Cost Averaging (DCA): Building Wealth Systematically in 2026"
 description: "Master Bitcoin dollar-cost averaging strategy to build wealth without timing the market. Complete DCA guide including automation, psychology, and best practices."
 date: 2026-05-26

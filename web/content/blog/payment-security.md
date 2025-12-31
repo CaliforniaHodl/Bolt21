@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Bitcoin Payment Security: Best Practices to Protect Your Funds"
 description: "Learn essential Bitcoin security practices. Protect your wallet, avoid scams, secure your recovery phrase, and safely send and receive Bitcoin payments."
 date: 2024-11-25

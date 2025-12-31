@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Accepting Bitcoin as a Merchant: Complete Integration Guide for 2026"
 description: "Learn how to accept Bitcoin payments in your business with Lightning Network, payment processors, and point-of-sale systems. Complete merchant guide for 2026."
 date: 2026-05-05

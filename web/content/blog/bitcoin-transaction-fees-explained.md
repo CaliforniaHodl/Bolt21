@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Bitcoin Transaction Fees Explained: How to Save Money on Transfers in 2026"
 description: "Complete guide to Bitcoin transaction fees including fee calculation, optimization strategies, Lightning Network savings, and fee estimation in 2026."
 date: 2026-04-21

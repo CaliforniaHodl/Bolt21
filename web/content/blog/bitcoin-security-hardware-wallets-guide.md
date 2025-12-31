@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Hardware Wallets for Bitcoin: Ultimate Security Guide for Cold Storage in 2026"
 description: "Complete guide to Bitcoin hardware wallets including setup, best practices, and choosing between Ledger, Trezor, and Coldcard for maximum security in 2026."
 date: 2026-06-02

@@ -1,11 +1,4 @@
-# robots.txt for bolt21.io
-# Allow all search engines to crawl the site
-
 User-agent: *
 Allow: /
 
-# Disallow admin areas
-Disallow: /admin/
-
-# Sitemap location
 Sitemap: https://bolt21.io/sitemap.xml

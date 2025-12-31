@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Self-Custodial Wallets: Why You Should Control Your Bitcoin Keys"
 description: "Learn why self-custodial wallets are essential for Bitcoin security. Understand the difference between custodial and non-custodial wallets, and how to protect your funds."
 date: 2024-12-10

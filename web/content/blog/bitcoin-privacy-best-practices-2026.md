@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Bitcoin Privacy Best Practices: Protecting Your Financial Privacy in 2026"
 description: "Complete guide to Bitcoin privacy including address management, CoinJoin, Lightning Network privacy, and operational security best practices for 2026."
 date: 2026-04-14

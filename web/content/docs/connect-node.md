@@ -1,5 +1,6 @@
 ---
 title: 'Connect Your Own Node'
+priority: 0.6
 description: 'Advanced guide to connecting Bolt21 to your own LND Lightning node for full control over routing and channels.'
 layout: 'docs'
 weight: 8

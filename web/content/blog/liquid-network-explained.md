@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Liquid Network: Bitcoin Sidechains for Fast, Confidential Transactions"
 description: "Learn about Liquid Network, the Bitcoin sidechain enabling fast settlements, confidential transactions, and tokenized assets. Compare Liquid to Lightning and on-chain Bitcoin."
 date: 2024-12-02

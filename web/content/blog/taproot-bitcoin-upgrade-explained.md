@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Taproot Explained: How Bitcoin's Privacy and Efficiency Upgrade Changed Everything"
 description: "Understanding Taproot, Bitcoin's most significant upgrade in years. Learn about Schnorr signatures, privacy improvements, and smart contract benefits in 2026."
 date: 2026-05-19

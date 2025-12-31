@@ -12,36 +12,36 @@
     </div>
 
     {{/* Column 2: Product Links */}}
-    <div class="footer-col footer-links">
-      <h5>Product</h5>
+    <nav class="footer-col footer-links" aria-label="Product">
+      <p class="footer-heading">Product</p>
       <ul>
         <li><a href="/features">Features</a></li>
         <li><a href="/#download">Download</a></li>
         <li><a href="/docs/">Docs</a></li>
         <li><a href="/blog/">Blog</a></li>
       </ul>
-    </div>
+    </nav>
 
     {{/* Column 3: Company Links */}}
-    <div class="footer-col footer-links">
-      <h5>Company</h5>
+    <nav class="footer-col footer-links" aria-label="Company">
+      <p class="footer-heading">Company</p>
       <ul>
         <li><a href="/about">About</a></li>
         <li><a href="/support/contact-us">Contact</a></li>
         <li><a href="https://github.com/CaliforniaHodl/Bolt21" target="_blank" rel="noopener">GitHub</a></li>
         <li><a href="https://twitter.com/bolt21app" target="_blank" rel="noopener">Twitter</a></li>
       </ul>
-    </div>
+    </nav>
 
     {{/* Column 4: Legal Links */}}
-    <div class="footer-col footer-links">
-      <h5>Legal</h5>
+    <nav class="footer-col footer-links" aria-label="Legal">
+      <p class="footer-heading">Legal</p>
       <ul>
         <li><a href="/privacy-policy">Privacy Policy</a></li>
         <li><a href="/terms-of-use">Terms of Use</a></li>
         <li><a href="/accessibility">Accessibility</a></li>
       </ul>
-    </div>
+    </nav>
   </div>
 
   {{/* Copyright */}}
@@ -67,8 +67,13 @@
   padding-right: 20px;
 }
 
-.footer-links h5 {
+.footer-heading {
   margin-bottom: 1rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
 }
 
 .footer-links ul {

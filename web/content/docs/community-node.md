@@ -1,5 +1,6 @@
 ---
 title: 'Community Node'
+priority: 0.6
 description: 'Learn about the Bolt21 Community Node - how it provides lower fees for Lightning payments by routing through shared infrastructure.'
 layout: 'docs'
 weight: 7

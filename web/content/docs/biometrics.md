@@ -1,5 +1,6 @@
 ---
 title: 'Biometric Authentication'
+priority: 0.6
 description: 'Secure your Bolt21 wallet with Face ID, Touch ID, or fingerprint authentication. Learn how to set up and manage biometric security.'
 layout: 'docs'
 weight: 4

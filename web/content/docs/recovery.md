@@ -1,5 +1,6 @@
 ---
 title: 'Recovery & Restore'
+priority: 0.6
 description: 'How to recover your Bolt21 wallet using your 12-word recovery phrase. Restore access to your Bitcoin on any device.'
 layout: 'docs'
 weight: 6

@@ -1,5 +1,6 @@
 ---
 css: ["blog.css"]
+priority: 0.5
 title: "Bitcoin vs Traditional Banking: Why Financial Sovereignty Matters in 2026"
 description: "Compare Bitcoin and traditional banking across fees, access, privacy, and control. Understand why Bitcoin offers true financial sovereignty in 2026."
 date: 2026-06-09
