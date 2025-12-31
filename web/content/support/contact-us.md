@@ -16,7 +16,7 @@ For security issues: [security@bolt21.io](mailto:security@bolt21.io)
 
 ### GitHub
 
-Found a bug or want to contribute? Visit our [GitHub repository](https://github.com/bolt21).
+Found a bug or want to contribute? Visit our [GitHub repository](https://github.com/CaliforniaHodl/Bolt21).
 
 ### Social Media
 
