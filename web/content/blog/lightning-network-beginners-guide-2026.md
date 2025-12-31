@@ -14,7 +14,7 @@ The Lightning Network has transformed Bitcoin from a settlement layer into a ful
 
 ## What Is the Lightning Network?
 
-The Lightning Network is a second-layer protocol built on top of Bitcoin that enables instant, low-cost transactions between participants. Rather than recording every transaction on the Bitcoin blockchain, the Lightning Network creates payment channels between users, allowing them to exchange Bitcoin off-chain with near-instant settlement and minimal fees.
+The Lightning Network is a second-layer protocol built on top of Bitcoin that enables instant, low-cost transactions between participants. Rather than recording every transaction on the Bitcoin blockchain, the Lightning Network creates payment channels between users, allowing them to exchange Bitcoin off-chain with near-near-instant settlement and minimal fees.
 
 ### The Problem Lightning Solves
 

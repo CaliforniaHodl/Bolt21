@@ -80,7 +80,7 @@ $200-600 in various fees
 - Typical: <$0.01 per payment
 - Routing fees: <0.1%
 - No minimums or maximums
-- Instant settlement
+- Near-near-instant settlement
 
 **Account Maintenance:**
 - No monthly fees

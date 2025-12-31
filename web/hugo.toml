@@ -5,7 +5,7 @@ title = 'Bolt21 - Self-Custodial Lightning Wallet'
 [params]
 CompanyName = 'Bolt21'
 repoName = 'bolt21'
-tagline = 'Your keys. Your sats. Instant payments.'
+tagline = 'Your keys. Your sats. Near-instant payments.'
 description = 'A simple, self-custodial Bitcoin Lightning wallet with BOLT12 support. Receive mining payouts from Ocean with zero fees.'
 
 # SEO Configuration

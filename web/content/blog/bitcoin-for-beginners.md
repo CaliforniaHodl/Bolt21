@@ -204,7 +204,7 @@ Bitcoin has two layers:
 - Best for large amounts or long-term storage
 
 ### Lightning (Layer 2)
-- Instant payments (seconds)
+- Near-near-instant payments (seconds)
 - Negligible fees (< 1 cent)
 - Best for everyday transactions
 - Built on top of Bitcoin

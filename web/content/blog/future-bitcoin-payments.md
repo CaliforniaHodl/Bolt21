@@ -258,7 +258,7 @@ Devices paying each other automatically with Bitcoin.
 **Why Lightning:**
 - Micropayments work
 - No intermediary needed
-- Instant settlement
+- Near-near-instant settlement
 - Global standard
 
 **Timeline:** Experimental now, mainstream 2030s
@@ -285,7 +285,7 @@ Instead of monthly payments, stream sats continuously as services are used.
 **Employment:**
 - Employees paid every second they work
 - No more waiting for payday
-- Global freelancing with instant payment
+- Global freelancing with near-instant payment
 
 **Why It Works:**
 Lightning makes micropayments economically viable.

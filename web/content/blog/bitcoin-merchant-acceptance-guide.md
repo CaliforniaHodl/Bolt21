@@ -10,7 +10,7 @@ image: '/images/blog/bitcoin-merchant-acceptance-guide.png'
 
 # Accepting Bitcoin as a Merchant: Complete Integration Guide for 2026
 
-Bitcoin adoption among merchants continues accelerating in 2026, driven by Lightning Network's instant settlements and near-zero fees. This comprehensive guide walks through everything you need to know about accepting Bitcoin payments in your business.
+Bitcoin adoption among merchants continues accelerating in 2026, driven by Lightning Network's near-instant settlements and near-zero fees. This comprehensive guide walks through everything you need to know about accepting Bitcoin payments in your business.
 
 ## Why Accept Bitcoin Payments?
 
@@ -68,7 +68,7 @@ Accept payments from anywhere instantly:
 
 **Bitcoin Advantages:**
 - Same fees globally
-- Instant settlement (Lightning)
+- Near-near-instant settlement (Lightning)
 - No currency conversion needed
 - Universal payment method
 - 24/7 availability
@@ -343,7 +343,7 @@ Lightning Network provides optimal merchant experience in 2026.
 1. Scan merchant's QR code (BOLT12 offer)
 2. Wallet shows amount
 3. Confirm payment
-4. Instant settlement (~2 seconds)
+4. Near-near-instant settlement (~2 seconds)
 5. Receive goods/services
 
 **Merchant Experience:**
@@ -546,7 +546,7 @@ Bitcoin excels for cross-border trade:
 
 **Benefits:**
 - No currency conversion
-- Instant settlement globally
+- Near-near-instant settlement globally
 - No international card fees
 - Access to global market
 
@@ -582,7 +582,7 @@ Merchant adoption trends for coming years:
 
 ## Start Accepting Bitcoin Today
 
-Bitcoin merchant adoption provides competitive advantages: lower fees, global reach, instant settlement, and access to growing Bitcoin economy. Lightning Network makes Bitcoin practical for everyday commerce with instant payments and minimal fees.
+Bitcoin merchant adoption provides competitive advantages: lower fees, global reach, near-instant settlement, and access to growing Bitcoin economy. Lightning Network makes Bitcoin practical for everyday commerce with near-instant payments and minimal fees.
 
 [Bolt21](/features) offers everything merchants need: BOLT12 reusable payment addresses, instant Lightning settlements, and self-custodial security. Perfect for freelancers, small businesses, and anyone accepting Bitcoin payments.
 

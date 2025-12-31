@@ -61,7 +61,7 @@ Layer 2 protocol for instant, cheap payments.
 - Recurring payments
 
 **Pros:**
-- Instant settlement (seconds)
+- Near-near-instant settlement (seconds)
 - Negligible fees (< 1 sat)
 - Perfect for micropayments
 - Scales to millions of transactions

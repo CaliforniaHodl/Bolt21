@@ -105,7 +105,7 @@ No complicated seed derivation paths, no hardware requirements, no technical jar
 - Obvious warnings for risky actions
 
 ### Lightning Network Integration
-Receive instant payments with low fees while maintaining full custody of your Bitcoin. No need to choose between convenience and security.
+Receive near-instant payments with low fees while maintaining full custody of your Bitcoin. No need to choose between convenience and security.
 
 ## Common Myths About Self-Custody
 

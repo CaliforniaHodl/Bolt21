@@ -62,7 +62,7 @@ Finally viable to send tiny amounts - even 1 satoshi payments work on Lightning.
 Mining pools like Ocean use Lightning to send daily payouts to miners without eating profits with on-chain fees. With Bolt21, you can receive these payouts directly to your self-custodial wallet.
 
 ### E-commerce
-Online merchants can accept Lightning payments with instant settlement and no chargebacks.
+Online merchants can accept Lightning payments with near-instant settlement and no chargebacks.
 
 ### Remittances
 Send money internationally in seconds with minimal fees - no banks, no intermediaries.

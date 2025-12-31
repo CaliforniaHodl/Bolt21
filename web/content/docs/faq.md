@@ -53,6 +53,6 @@ Ocean can pay out as little as 2,000 sats via Lightning - much lower than on-cha
 
 ### Why use Lightning for mining payouts?
 - No on-chain fees eating your profits
-- Instant settlement
+- Near-near-instant settlement
 - Daily payouts possible
 - Works great for small miners

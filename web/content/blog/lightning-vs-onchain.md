@@ -127,7 +127,7 @@ Lightning transactions happen off-chain through payment channels, only settling 
 
 **Why**: Fees don't make sense for on-chain
 
-**Instant Payments Needed**
+**Near-Near-Instant Payments Needed**
 - Point-of-sale purchases
 - Real-time payments
 - When waiting an hour isn't acceptable
@@ -198,7 +198,7 @@ Advanced users running nodes need to manage channels. Custodial or LSP-based wal
 ### Scenario 1: Buying Coffee
 
 **Amount**: $5
-**Need**: Instant payment at register
+**Need**: Near-near-instant payment at register
 
 **Answer: Lightning**
 
@@ -465,7 +465,7 @@ Payments find path through network automatically.
 
 ### Choose Lightning When:
 - Daily spending and small amounts
-- Instant payment needed
+- Near-near-instant payment needed
 - Frequent transactions
 - Receiving mining payouts
 - Micropayments
@@ -480,7 +480,7 @@ Payments find path through network automatically.
 ### Bolt21: Lightning-Optimized
 
 Bolt21 focuses on Lightning for:
-- Instant payments
+- Near-near-instant payments
 - Zero-fee receiving
 - BOLT12 offer support
 - Perfect for miners
@@ -513,7 +513,7 @@ Soon, users won't need to think about "Lightning vs on-chain" - wallets will cho
 **There's no "better" option - each layer serves different needs:**
 
 - **On-Chain**: The foundation, maximum security, large amounts
-- **Lightning**: The scaling layer, instant payments, daily use
+- **Lightning**: The scaling layer, near-instant payments, daily use
 
 Use on-chain for savings, Lightning for spending. Together, they make Bitcoin usable for everything from micropayments to storing generational wealth.
 
