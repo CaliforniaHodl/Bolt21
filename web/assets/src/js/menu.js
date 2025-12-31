@@ -1,4 +1,2 @@
-console.log('menu.js loaded');
-
-
+// Menu functionality
 $('body').addClass('menu-js');

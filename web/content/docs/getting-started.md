@@ -1,6 +1,6 @@
 ---
 title: 'Getting Started'
-description: 'How to set up your Bolt21 wallet and start receiving Bitcoin.'
+description: 'How to set up your Bolt21 self-custodial Lightning wallet and start receiving Bitcoin payments instantly. Create your wallet, secure your recovery phrase, get paid.'
 weight: 1
 layout: 'docs'
 css: ['docs.css']

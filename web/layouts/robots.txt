@@ -1,4 +1,11 @@
 User-agent: *
-sitemap: {{ .Site.BaseURL }}sitemap.xml
+Allow: /
+
+# Disallow admin areas
+Disallow: /admin/
 Disallow: /tags
+Disallow: /categories
 Disallow: /provenance
+
+# Sitemap location
+Sitemap: {{ .Site.BaseURL }}sitemap.xml

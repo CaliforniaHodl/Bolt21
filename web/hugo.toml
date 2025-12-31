@@ -8,6 +8,14 @@ repoName = 'bolt21'
 tagline = 'Your keys. Your sats. Instant payments.'
 description = 'A simple, self-custodial Bitcoin Lightning wallet with BOLT12 support. Receive mining payouts from Ocean with zero fees.'
 
+# SEO Configuration
+enableRobotsTXT = true
+
+[sitemap]
+changefreq = 'weekly'
+filename = 'sitemap.xml'
+priority = 0.5
+
 [environments.development]
 baseURL = 'http://localhost:1313/'
 
