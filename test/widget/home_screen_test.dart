@@ -30,6 +30,15 @@ Widget createTestWidget(Widget child, {WalletProvider? wallet}) {
   );
 }
 
+// Test helper to pump widget and wait for all async operations including timers
+Future<void> pumpTestWidget(WidgetTester tester, Widget widget, {WalletProvider? wallet}) async {
+  await tester.pumpWidget(createTestWidget(widget, wallet: wallet));
+  await tester.pumpAndSettle();
+  // Give time for BalanceCard's 500ms timer to complete
+  await tester.pump(const Duration(milliseconds: 600));
+  await tester.pumpAndSettle();
+}
+
 // Test WalletProvider with controllable state
 class TestWalletProvider extends ChangeNotifier implements WalletProvider {
   bool _isLoading = false;
@@ -107,12 +116,17 @@ class TestWalletProvider extends ChangeNotifier implements WalletProvider {
   @override String generateMnemonic() => 'test mnemonic';
   @override Future<String?> generateBolt11Invoice({required BigInt amountSat, String? description}) async => 'lnbc1test...';
   @override Future<void> refreshLndConnection() async {}
-  @override Future<String?> sendPaymentViaCommunityNode(String destination, {BigInt? amountSat, bool? useCommunityNode}) async => 'op_123';
+  @override Future<String?> sendPaymentViaLnd(String paymentRequest, {int? amountSat}) async => 'op_123';
+  @override Future<void> setCommunityNodeEnabled(bool enabled) async {}
+  @override bool shouldUseLndForDestination(String destination) => false;
+  @override Future<String?> sendPaymentViaCommunityNode(String paymentRequest, {int? amountSat}) async => 'op_123';
   @override bool get isLndConnected => false;
   @override LndBalance? get lndBalance => null;
   @override LndNodeInfo? get lndNodeInfo => null;
   @override LndService get lndService => MockLndService();
   @override CommunityNodeService get communityNodeService => MockCommunityNodeService();
+  @override bool get isCommunityNodeEnabled => false;
+  @override CommunityNodeStatus? get communityNodeStatus => null;
   @override Future<void> refreshAll() async { notifyListeners(); }
   @override Future<String?> generateOnChainAddress() async => 'bc1qtest...';
   @override Future<String?> generateBolt12Offer() async => 'lno1test...';
@@ -159,50 +173,43 @@ void main() {
   group('HomeScreen', () {
     group('displays correctly', () {
       testWidgets('shows logo in app bar', (tester) async {
-        await tester.pumpWidget(createTestWidget(const HomeScreen()));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen());
 
         expect(find.byType(Image), findsWidgets);
       });
 
       testWidgets('shows settings button', (tester) async {
-        await tester.pumpWidget(createTestWidget(const HomeScreen()));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen());
 
         expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
       });
 
       testWidgets('shows balance card', (tester) async {
-        await tester.pumpWidget(createTestWidget(const HomeScreen()));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen());
 
         expect(find.text('Total Balance'), findsOneWidget);
       });
 
       testWidgets('shows Receive button', (tester) async {
-        await tester.pumpWidget(createTestWidget(const HomeScreen()));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen());
 
         expect(find.text('Receive'), findsOneWidget);
       });
 
       testWidgets('shows Send button', (tester) async {
-        await tester.pumpWidget(createTestWidget(const HomeScreen()));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen());
 
         expect(find.text('Send'), findsOneWidget);
       });
 
       testWidgets('shows Recent Activity section', (tester) async {
-        await tester.pumpWidget(createTestWidget(const HomeScreen()));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen());
 
         expect(find.text('Recent Activity'), findsOneWidget);
       });
 
       testWidgets('shows "No transactions yet" when empty', (tester) async {
-        await tester.pumpWidget(createTestWidget(const HomeScreen()));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen());
 
         expect(find.text('No transactions yet'), findsOneWidget);
       });
@@ -211,40 +218,35 @@ void main() {
     group('displays balance correctly', () {
       testWidgets('shows zero balance', (tester) async {
         final wallet = TestWalletProvider(balanceSat: 0);
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         expect(find.text('0 sats'), findsAtLeastNWidgets(1));
       });
 
       testWidgets('shows small balance', (tester) async {
         final wallet = TestWalletProvider(balanceSat: 500);
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         expect(find.text('500 sats'), findsAtLeastNWidgets(1));
       });
 
       testWidgets('shows balance with commas', (tester) async {
         final wallet = TestWalletProvider(balanceSat: 10000);
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         expect(find.text('10,000 sats'), findsAtLeastNWidgets(1));
       });
 
       testWidgets('shows large balance with commas', (tester) async {
         final wallet = TestWalletProvider(balanceSat: 1234567);
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         expect(find.text('1,234,567 sats'), findsOneWidget);
       });
 
       testWidgets('shows pending receive amount', (tester) async {
         final wallet = TestWalletProvider(pendingReceiveSat: 5000);
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         expect(find.text('Pending In'), findsOneWidget);
         expect(find.text('5.0k sats'), findsOneWidget);
@@ -252,8 +254,7 @@ void main() {
 
       testWidgets('shows pending send amount', (tester) async {
         final wallet = TestWalletProvider(pendingSendSat: 3000);
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         expect(find.text('Pending Out'), findsOneWidget);
         expect(find.text('3.0k sats'), findsOneWidget);
@@ -274,8 +275,7 @@ void main() {
           isInitialized: false,
           error: 'Connection failed',
         );
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         expect(find.text('Failed to start node'), findsOneWidget);
         expect(find.text('Connection failed'), findsOneWidget);
@@ -296,8 +296,7 @@ void main() {
             ),
           ],
         );
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         expect(find.text('Payment May Be Pending'), findsOneWidget);
       });
@@ -313,16 +312,14 @@ void main() {
             ),
           ],
         );
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         expect(find.text('Dismiss'), findsOneWidget);
       });
 
       testWidgets('hides alert when no incomplete operations', (tester) async {
         final wallet = TestWalletProvider(incompleteOperations: []);
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         expect(find.text('Payment May Be Pending'), findsNothing);
         expect(find.text('Interrupted Operations'), findsNothing);
@@ -339,8 +336,7 @@ void main() {
             ),
           ],
         );
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         // Send operations should show the red warning
         expect(find.byIcon(Icons.warning_amber), findsOneWidget);
@@ -357,8 +353,7 @@ void main() {
             ),
           ],
         );
-        await tester.pumpWidget(createTestWidget(const HomeScreen(), wallet: wallet));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen(), wallet: wallet);
 
         // Receive operations should show the info icon
         expect(find.byIcon(Icons.info_outline), findsOneWidget);
@@ -367,24 +362,21 @@ void main() {
 
     group('navigation buttons', () {
       testWidgets('Receive button exists and is enabled', (tester) async {
-        await tester.pumpWidget(createTestWidget(const HomeScreen()));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen());
 
         final receiveButton = find.text('Receive');
         expect(receiveButton, findsOneWidget);
       });
 
       testWidgets('Send button exists and is enabled', (tester) async {
-        await tester.pumpWidget(createTestWidget(const HomeScreen()));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen());
 
         final sendButton = find.text('Send');
         expect(sendButton, findsOneWidget);
       });
 
       testWidgets('Settings button exists and is enabled', (tester) async {
-        await tester.pumpWidget(createTestWidget(const HomeScreen()));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen());
 
         final settingsButton = find.byIcon(Icons.settings_outlined);
         expect(settingsButton, findsOneWidget);
@@ -393,8 +385,7 @@ void main() {
 
     group('pull to refresh', () {
       testWidgets('can pull to refresh', (tester) async {
-        await tester.pumpWidget(createTestWidget(const HomeScreen()));
-        await tester.pumpAndSettle();
+        await pumpTestWidget(tester, const HomeScreen());
 
         // Pull down to trigger refresh
         await tester.drag(find.byType(RefreshIndicator), const Offset(0, 300));

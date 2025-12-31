@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:bolt21/services/operation_state_service.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
@@ -14,15 +15,58 @@ class MockPathProviderPlatform extends Fake
   Future<String?> getApplicationDocumentsPath() async => testDir;
 }
 
+// Mock secure storage for tests
+class MockSecureStorage {
+  static final Map<String, String> _storage = {};
+
+  static void setupMock() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.it_nomads.com/flutter_secure_storage'),
+      (MethodCall methodCall) async {
+        switch (methodCall.method) {
+          case 'read':
+            final key = methodCall.arguments['key'] as String;
+            return _storage[key];
+          case 'write':
+            final key = methodCall.arguments['key'] as String;
+            final value = methodCall.arguments['value'] as String;
+            _storage[key] = value;
+            return null;
+          case 'delete':
+            final key = methodCall.arguments['key'] as String;
+            _storage.remove(key);
+            return null;
+          case 'deleteAll':
+            _storage.clear();
+            return null;
+          default:
+            return null;
+        }
+      },
+    );
+  }
+
+  static void clear() {
+    _storage.clear();
+  }
+}
+
 // Test wallet ID used for all operations in these tests
 const String testWalletId = 'test-wallet-recovery';
 
 void main() {
   late Directory tempDir;
 
+  setUpAll(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    MockSecureStorage.setupMock();
+  });
+
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp('bolt21_crash_test_');
     PathProviderPlatform.instance = MockPathProviderPlatform(tempDir.path);
+    MockSecureStorage.clear();
   });
 
   tearDown(() async {

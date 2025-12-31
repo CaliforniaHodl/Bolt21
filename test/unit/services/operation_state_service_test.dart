@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:bolt21/services/operation_state_service.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
@@ -14,6 +15,43 @@ class MockPathProviderPlatform extends Fake
   Future<String?> getApplicationDocumentsPath() async => testDir;
 }
 
+// Mock secure storage for tests
+class MockSecureStorage {
+  static final Map<String, String> _storage = {};
+
+  static void setupMock() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.it_nomads.com/flutter_secure_storage'),
+      (MethodCall methodCall) async {
+        switch (methodCall.method) {
+          case 'read':
+            final key = methodCall.arguments['key'] as String;
+            return _storage[key];
+          case 'write':
+            final key = methodCall.arguments['key'] as String;
+            final value = methodCall.arguments['value'] as String;
+            _storage[key] = value;
+            return null;
+          case 'delete':
+            final key = methodCall.arguments['key'] as String;
+            _storage.remove(key);
+            return null;
+          case 'deleteAll':
+            _storage.clear();
+            return null;
+          default:
+            return null;
+        }
+      },
+    );
+  }
+
+  static void clear() {
+    _storage.clear();
+  }
+}
+
 // Test wallet ID used for all operations in these tests
 const String testWalletId = 'test-wallet-unit';
 
@@ -21,9 +59,15 @@ void main() {
   late OperationStateService service;
   late Directory tempDir;
 
+  setUpAll(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    MockSecureStorage.setupMock();
+  });
+
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp('bolt21_test_');
     PathProviderPlatform.instance = MockPathProviderPlatform(tempDir.path);
+    MockSecureStorage.clear();
     service = OperationStateService();
     await service.initialize();
   });
@@ -43,7 +87,7 @@ void main() {
 
       test('creates state file on first operation', () async {
         await service.createOperation(type: OperationType.send, walletId: testWalletId);
-        final file = File('${tempDir.path}/operation_state.json');
+        final file = File('${tempDir.path}/operation_state.enc');
         expect(await file.exists(), isTrue);
       });
 
@@ -64,7 +108,7 @@ void main() {
       });
 
       test('handles empty state file gracefully', () async {
-        final file = File('${tempDir.path}/operation_state.json');
+        final file = File('${tempDir.path}/operation_state.enc');
         await file.writeAsString('');
 
         final newService = OperationStateService();
@@ -73,7 +117,7 @@ void main() {
       });
 
       test('handles corrupted JSON gracefully', () async {
-        final file = File('${tempDir.path}/operation_state.json');
+        final file = File('${tempDir.path}/operation_state.enc');
         await file.writeAsString('not valid json {{{');
 
         final newService = OperationStateService();
@@ -82,7 +126,7 @@ void main() {
       });
 
       test('handles partial JSON gracefully', () async {
-        final file = File('${tempDir.path}/operation_state.json');
+        final file = File('${tempDir.path}/operation_state.enc');
         await file.writeAsString('[{"id": "test"');
 
         final newService = OperationStateService();
@@ -91,12 +135,17 @@ void main() {
       });
 
       test('handles null values in JSON', () async {
-        final file = File('${tempDir.path}/operation_state.json');
-        await file.writeAsString('[{"id": "test", "type": "send", "status": "pending", "startedAt": "2024-01-01T00:00:00.000", "destination": null, "amountSat": null}]');
+        // Create an operation without destination or amountSat (null values)
+        await service.createOperation(
+          type: OperationType.send,
+          walletId: testWalletId,
+        );
 
         final newService = OperationStateService();
         await newService.initialize();
         expect(newService.getAllOperations().length, equals(1));
+        expect(newService.getAllOperations().first.destination, isNull);
+        expect(newService.getAllOperations().first.amountSat, isNull);
       });
     });
 

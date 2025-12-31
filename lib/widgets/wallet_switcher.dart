@@ -38,15 +38,17 @@ class WalletSwitcher extends StatelessWidget {
                   color: Bolt21Theme.orange,
                 ),
                 const SizedBox(width: 8),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 120),
-                  child: Text(
-                    activeWallet.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Bolt21Theme.textPrimary,
+                Flexible(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 120),
+                    child: Text(
+                      activeWallet.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Bolt21Theme.textPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 4),
