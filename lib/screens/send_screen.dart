@@ -88,7 +88,7 @@ class _SendScreenState extends State<SendScreen> {
         final cumulativeAmount = paymentTracker.getCumulativeAmount();
         final totalAmount = cumulativeAmount + paymentAmount;
         final authenticated = await AuthService.authenticate(
-          reason: 'Authenticate to send $paymentAmount sats (${totalAmount >= PaymentTrackerService.biometricThresholdSats ? "cumulative: ${totalAmount}" : "large payment"})',
+          reason: 'Authenticate to send $paymentAmount sats (${totalAmount >= PaymentTrackerService.biometricThresholdSats ? "cumulative: $totalAmount" : "large payment"})',
         );
         if (!authenticated) {
           if (mounted) {

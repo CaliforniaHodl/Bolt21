@@ -1,4 +1,4 @@
-/// Payment address validation utilities
+/// Payment address validation utilities.
 ///
 /// SECURITY: Validates addresses to prevent:
 /// - Unicode lookalike/homograph attacks (Cyrillic chars that look like Latin)
@@ -6,7 +6,6 @@
 /// - Zero-width character injection (invisible chars that change address)
 /// - Invalid character injection
 /// - Malformed addresses
-
 class AddressValidator {
   // SECURITY: Dangerous unicode control characters that can manipulate text display
   // These can make addresses appear different than they actually are

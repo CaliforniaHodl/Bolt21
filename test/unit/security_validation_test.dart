@@ -237,7 +237,7 @@ void main() {
     });
 
     test('handles very long destination strings', () {
-      final longDestination = 'lno1' + 'a' * 1000;
+      final longDestination = 'lno1${'a' * 1000}';
       final op = OperationState(
         id: 'op_1',
         type: OperationType.send,

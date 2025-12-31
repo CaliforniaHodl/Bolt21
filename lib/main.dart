@@ -84,10 +84,12 @@ class _AppRouterState extends State<AppRouter> with WidgetsBindingObserver {
   }
 
   Future<void> _checkWalletStatus() async {
+    // Get wallet reference before async gap
+    final wallet = context.read<WalletProvider>();
+
     final biometricEnabled = await AuthService.isBiometricEnabled();
 
     // Load wallets (handles migration from single-wallet automatically)
-    final wallet = context.read<WalletProvider>();
     await wallet.loadWallets();
 
     final hasWallet = wallet.wallets.isNotEmpty;

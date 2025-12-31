@@ -55,8 +55,12 @@ class AppUpdateService {
     final requiredParts = required.split('.').map((e) => int.tryParse(e) ?? 0).toList();
 
     // Pad to same length
-    while (currentParts.length < 3) currentParts.add(0);
-    while (requiredParts.length < 3) requiredParts.add(0);
+    while (currentParts.length < 3) {
+      currentParts.add(0);
+    }
+    while (requiredParts.length < 3) {
+      requiredParts.add(0);
+    }
 
     for (int i = 0; i < 3; i++) {
       if (currentParts[i] < requiredParts[i]) return true;

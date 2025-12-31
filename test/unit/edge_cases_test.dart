@@ -43,7 +43,7 @@ void main() {
     });
 
     test('different destinations get unique keys', () {
-      String generateKey(String dest, int amount) => 'send_${dest}_${amount}';
+      String generateKey(String dest, int amount) => 'send_${dest}_$amount';
 
       final key1 = generateKey('lnbc1...', 5000);
       final key2 = generateKey('lnbc2...', 5000);
@@ -52,7 +52,7 @@ void main() {
     });
 
     test('same destination different amount gets unique key', () {
-      String generateKey(String dest, int amount) => 'send_${dest}_${amount}';
+      String generateKey(String dest, int amount) => 'send_${dest}_$amount';
 
       final key1 = generateKey('lnbc1...', 5000);
       final key2 = generateKey('lnbc1...', 6000);

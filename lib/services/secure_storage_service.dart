@@ -17,7 +17,6 @@ class SecureStorageService {
   static bool _isInitialized = false;
   static const _storage = FlutterSecureStorage(
     aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,  // Use EncryptedSharedPreferences
       sharedPreferencesName: 'bolt21_secure_prefs',
       preferencesKeyPrefix: 'bolt21_',
     ),

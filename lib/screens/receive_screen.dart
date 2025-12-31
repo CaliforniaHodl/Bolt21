@@ -253,7 +253,7 @@ class _Bolt11TabState extends State<_Bolt11Tab> {
                         Switch(
                           value: _useLnd,
                           onChanged: (v) => setState(() => _useLnd = v),
-                          activeColor: Bolt21Theme.success,
+                          activeTrackColor: Bolt21Theme.success,
                         ),
                       ],
                     ),

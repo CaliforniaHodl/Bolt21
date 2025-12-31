@@ -551,7 +551,7 @@ void main() {
         final service = OperationStateService();
         await service.initialize();
 
-        final longDest = 'lnbc' + 'x' * 10000; // 10KB destination string
+        final longDest = 'lnbc${'x' * 10000}'; // 10KB destination string
 
         final op = await service.createOperation(
           type: OperationType.send,

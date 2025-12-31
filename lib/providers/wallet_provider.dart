@@ -720,9 +720,7 @@ class WalletProvider extends ChangeNotifier {
       _error = null;
     } catch (e) {
       // Don't overwrite critical errors with refresh failures
-      if (_error == null) {
-        _error = 'Failed to refresh: ${e.toString()}';
-      }
+      _error ??= 'Failed to refresh: ${e.toString()}';
       SecureLogger.warn('Refresh failed', tag: 'Wallet');
     }
     notifyListeners();
@@ -860,7 +858,7 @@ class WalletProvider extends ChangeNotifier {
       final balance = totalBalanceSats;
       final available = balance > feeBufferSats ? balance - feeBufferSats : 0;
       if (amountSat.toInt() > available) {
-        _error = 'Insufficient balance. Available: $available sats (${feeBufferSats} sats reserved for fees)';
+        _error = 'Insufficient balance. Available: $available sats ($feeBufferSats sats reserved for fees)';
         notifyListeners();
         return null;
       }
