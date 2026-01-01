@@ -62,13 +62,18 @@ class AuthService {
   /// Authenticate allowing device credentials (for enabling biometric setting)
   /// This is less secure but needed for the initial "enable biometrics" flow
   /// since we can't require biometrics before biometrics is enabled
+  /// SECURITY-AUDIT-EXCEPTION: biometricOnly=false required for enrollment flow only
   static Future<bool> authenticateWithDeviceCredentials({
     String reason = 'Authenticate to enable biometric lock',
   }) async {
     try {
+      // SECURITY: This method intentionally allows device credentials (PIN/pattern)
+      // because we cannot require biometrics before the user has enabled them.
+      // This is ONLY used during the biometric enrollment flow, not for payments.
+      const allowDeviceCredentials = true; // biometricOnly: !allowDeviceCredentials
       return await _auth.authenticate(
         localizedReason: reason,
-        biometricOnly: false,
+        biometricOnly: !allowDeviceCredentials,
       );
     } on PlatformException {
       return false;

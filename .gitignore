@@ -52,6 +52,11 @@ assets/config.json
 !.env.example
 secrets/
 
+# Android signing (NEVER commit keystores or passwords)
+*.jks
+*.keystore
+android/key.properties
+
 # Private tools (not for public distribution)
 tools/
 

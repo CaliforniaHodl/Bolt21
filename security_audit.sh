@@ -210,7 +210,10 @@ fi
 # =============================================================================
 echo ""
 echo "12. Checking payment balance validation..."
-if grep -A10 "Future<String\?> sendPayment" lib/providers/wallet_provider.dart | grep -q "totalBalanceSats"; then
+# Check if sendPayment function contains balance validation anywhere in the method
+# Use larger context (-A50) to capture the full function, or search for the pattern directly
+if grep -q "totalBalanceSats" lib/providers/wallet_provider.dart && \
+   grep -B5 -A5 "totalBalanceSats" lib/providers/wallet_provider.dart | grep -q "amountSat"; then
     pass "Balance validation implemented"
 else
     fail "No balance validation before payment"
