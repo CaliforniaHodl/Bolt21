@@ -355,7 +355,12 @@ class OperationStateService {
       final jsonList = _operations.map((op) => op.toJson()).toList();
       final plaintext = utf8.encode(json.encode(jsonList));
       final encrypted = await _encryptAesGcm(plaintext);
-      await _stateFile!.writeAsBytes(encrypted);
+
+      // SECURITY: Atomic write pattern to prevent corruption on crash
+      // Write to temp file first, then rename (atomic on POSIX/iOS/Android)
+      final tempFile = File('${_stateFile!.path}.tmp');
+      await tempFile.writeAsBytes(encrypted, flush: true);
+      await tempFile.rename(_stateFile!.path);
     } catch (e) {
       SecureLogger.error('Failed to save operation state', error: e, tag: 'OpState');
     }

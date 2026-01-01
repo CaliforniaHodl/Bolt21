@@ -15,9 +15,13 @@ class PaymentTrackerService {
   /// Threshold above which biometric is required (100k sats)
   static const int biometricThresholdSats = 100000;
 
-  /// Daily cumulative limit for biometric bypass prevention (500k sats/day)
+  /// Daily cumulative limit for biometric bypass prevention (200k sats/day)
   /// SECURITY: Prevents attacker from gaming 5-minute window by sending 99k every 5min1sec
-  static const int dailyCumulativeLimit = 500000;
+  static const int dailyCumulativeLimit = 200000;
+
+  /// Maximum number of payments without biometric in 24-hour window
+  /// SECURITY: Even if amounts are low, too many payments triggers biometric
+  static const int maxDailyPaymentsWithoutBiometric = 3;
 
   /// List of recent payment timestamps and amounts
   final List<_PaymentRecord> _recentPayments = [];
@@ -37,11 +41,16 @@ class PaymentTrackerService {
     // Calculate cumulative amount in 24-hour daily window
     final dailyCumulativeAmount = _getDailyCumulativeAmount();
 
-    // SECURITY: Require biometric if EITHER condition is met:
+    // Count payments in last 24 hours
+    final dailyPaymentCount = _getDailyPaymentCount();
+
+    // SECURITY: Require biometric if ANY condition is met:
     // 1. Cumulative + current exceeds 100k in 5-minute window (original protection)
-    // 2. Cumulative + current exceeds 500k in 24-hour window (prevents gaming)
+    // 2. Cumulative + current exceeds 200k in 24-hour window (prevents gaming)
+    // 3. More than 3 payments in 24 hours (prevents many small payments)
     return (cumulativeAmount + amountSats) >= biometricThresholdSats ||
-        (dailyCumulativeAmount + amountSats) >= dailyCumulativeLimit;
+        (dailyCumulativeAmount + amountSats) >= dailyCumulativeLimit ||
+        dailyPaymentCount >= maxDailyPaymentsWithoutBiometric;
   }
 
   /// Record a successful payment (call after payment succeeds)
@@ -78,6 +87,15 @@ class PaymentTrackerService {
     return _recentPayments
         .where((record) => record.timestamp.isAfter(dailyCutoff))
         .fold<int>(0, (sum, record) => sum + record.amountSats);
+  }
+
+  /// Count payments in 24-hour daily window (internal helper)
+  /// SECURITY: Prevents bypassing by making many tiny payments
+  int _getDailyPaymentCount() {
+    final dailyCutoff = DateTime.now().subtract(_dailyWindow);
+    return _recentPayments
+        .where((record) => record.timestamp.isAfter(dailyCutoff))
+        .length;
   }
 
   /// Remove payments older than tracking window (5 minutes)
