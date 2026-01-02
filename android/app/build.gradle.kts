@@ -37,39 +37,26 @@ android {
         versionName = flutter.versionName
     }
 
-    // Release signing config - uses key.properties if available
-    if (keystorePropertiesFile.exists()) {
-        signingConfigs {
-            create("release") {
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-                storeFile = file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
-            }
+    signingConfigs {
+        create("release") {
+            storeFile = file("/Users/jasonsutter/Documents/Companies/bolt21/android/bolt21-release.jks")
+            storePassword = "2bvkHCJSd92ljcLHEWekgBHH"
+            keyAlias = "bolt21"
+            keyPassword = "G5NuQeV5fmH2aIouweZXSLeN"
         }
     }
 
     buildTypes {
         release {
-            // PERFORMANCE: Enable minification and resource shrinking
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-
-            signingConfig = if (keystorePropertiesFile.exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                // Fallback to debug signing for development
-                signingConfigs.getByName("debug")
-            }
+            signingConfig = signingConfigs.getByName("release")
         }
     }
-
-    // Note: ABI splits disabled - conflicts with Flutter plugins ndk.abiFilters
-    // Use flutter build apk --split-per-abi instead
 }
 
 flutter {
