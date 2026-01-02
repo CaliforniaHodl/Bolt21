@@ -1,0 +1,52 @@
+🔐 BOLT21 SECURITY AUDIT
+========================
+Project: /Users/jasonsutter/Documents/Companies/bolt21
+Date: Thu Jan  1 16:32:50 PST 2026
+
+1. Checking for raw debugPrint() usage...
+[0;32m   ✅ PASS[0m: No raw debugPrint() usage
+
+2. Checking biometric configuration...
+[0;32m   ✅ PASS[0m: Biometric-only auth enforced
+
+3. Checking for hardcoded secrets...
+[0;32m   ✅ PASS[0m: No hardcoded secrets detected
+
+4. Checking Android certificate pinning...
+[0;32m   ✅ PASS[0m: Android cert pinning configured (12 pins)
+
+5. Checking iOS logging security...
+[0;32m   ✅ PASS[0m: No insecure iOS logging
+
+6. Checking iOS certificate pinning...
+[0;32m   ✅ PASS[0m: iOS certificate pinning implementation found
+
+7. Checking git dependency pinning...
+[0;32m   ✅ PASS[0m: Git dependencies pinned
+
+8. Checking for dev config in production assets...
+[0;32m   ✅ PASS[0m: No dev config in production assets
+
+9. Checking Android screenshot protection...
+[0;32m   ✅ PASS[0m: Android FLAG_SECURE enabled
+
+10. Checking for security-related TODOs...
+[0;32m   ✅ PASS[0m: No security-related TODOs
+
+11. Checking encryption configuration...
+[0;32m   ✅ PASS[0m: AES-256-GCM encryption verified
+
+12. Checking payment balance validation...
+[0;32m   ✅ PASS[0m: Balance validation implemented
+
+========================
+AUDIT SUMMARY
+========================
+Passed: 12
+Failed: 0
+
+[0;32m✅ ALL SECURITY CHECKS PASSED[0m
+
+The app is ready for release from a security perspective.
+Note: This script checks for common issues but is not a replacement
+      for professional security audits and penetration testing.

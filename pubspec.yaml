@@ -50,7 +50,7 @@ dependencies:
   breez_sdk_spark_flutter:
     git:
       url: https://github.com/breez/breez-sdk-spark-flutter
-      ref: main  # TODO: Pin to specific commit after testing
+      ref: 34832cae2867dda1a8bec7424f87776021f1c1ec  # Pinned 2026-01-01
 
   flutter_secure_storage: ^10.0.0
   qr_flutter: ^4.1.0
