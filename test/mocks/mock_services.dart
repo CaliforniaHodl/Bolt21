@@ -63,6 +63,7 @@ void setUpMockLightningService(MockLightningService mock, {
   when(() => mock.initialize(
     walletId: any(named: 'walletId'),
     mnemonic: any(named: 'mnemonic'),
+    backendType: any(named: 'backendType'),
   )).thenAnswer((_) async {});
 
   when(() => mock.generateBolt12Offer())

@@ -48,9 +48,10 @@ class UnifiedWalletInfo {
 
   UnifiedWalletInfo({
     required this.balanceSat,
-    this.pendingReceiveSat = BigInt.zero,
-    this.pendingSendSat = BigInt.zero,
-  });
+    BigInt? pendingReceiveSat,
+    BigInt? pendingSendSat,
+  })  : pendingReceiveSat = pendingReceiveSat ?? BigInt.zero,
+        pendingSendSat = pendingSendSat ?? BigInt.zero;
 }
 
 /// Unified fee recommendations

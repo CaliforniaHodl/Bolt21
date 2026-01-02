@@ -44,7 +44,6 @@ class SparkBackend implements LightningBackend {
         config: config,
         seed: seed,
         storageDir: workingDir,
-        apiKey: apiKey,
       );
 
       _sdk = await spark.connect(request: connectRequest);
@@ -106,7 +105,7 @@ class SparkBackend implements LightningBackend {
       ),
     );
     final response = await _sdk!.receivePayment(request: request);
-    return response.destination;
+    return response.paymentRequest;
   }
 
   @override
@@ -119,7 +118,7 @@ class SparkBackend implements LightningBackend {
       paymentMethod: spark.ReceivePaymentMethod.bitcoinAddress(),
     );
     final response = await _sdk!.receivePayment(request: request);
-    return response.destination;
+    return response.paymentRequest;
   }
 
   @override
@@ -139,12 +138,11 @@ class SparkBackend implements LightningBackend {
         ),
       spark.InputType_BitcoinAddress(field0: final addr) => BitcoinAddressInput(
           address: addr.address,
-          amountSat: addr.amountSat,
         ),
-      spark.InputType_LnUrlPay(field0: final data) => LnurlPayInput(
+      spark.InputType_LnurlPay(field0: final data) => LnurlPayInput(
           url: input,
-          minSat: data.minSendableSat,
-          maxSat: data.maxSendableSat,
+          minSat: data.minSendable ~/ BigInt.from(1000), // msat to sat
+          maxSat: data.maxSendable ~/ BigInt.from(1000), // msat to sat
           description: data.metadataStr,
         ),
       _ => UnknownInput(input),
@@ -213,13 +211,38 @@ class SparkBackend implements LightningBackend {
       amountSat: payment.amount,
       feesSat: payment.fees,
       timestamp: DateTime.fromMillisecondsSinceEpoch(payment.timestamp.toInt() * 1000),
-      methodType: switch (payment.details) {
+      description: _extractDescription(payment.details),
+      methodType: _getMethodType(payment.details, payment.method),
+    );
+  }
+
+  String? _extractDescription(spark.PaymentDetails? details) {
+    if (details == null) return null;
+    return switch (details) {
+      spark.PaymentDetails_Lightning(description: final desc) => desc,
+      _ => null,
+    };
+  }
+
+  PaymentMethodType _getMethodType(spark.PaymentDetails? details, spark.PaymentMethod method) {
+    if (details != null) {
+      return switch (details) {
         spark.PaymentDetails_Lightning() => PaymentMethodType.lightning,
         spark.PaymentDetails_Spark() => PaymentMethodType.spark,
-        spark.PaymentDetails_Bitcoin() => PaymentMethodType.onchain,
-        _ => PaymentMethodType.spark,
-      },
-    );
+        spark.PaymentDetails_Token() => PaymentMethodType.spark,
+        spark.PaymentDetails_Withdraw() => PaymentMethodType.onchain,
+        spark.PaymentDetails_Deposit() => PaymentMethodType.onchain,
+      };
+    }
+    // Fallback to method if details is null
+    return switch (method) {
+      spark.PaymentMethod.lightning => PaymentMethodType.lightning,
+      spark.PaymentMethod.spark => PaymentMethodType.spark,
+      spark.PaymentMethod.token => PaymentMethodType.spark,
+      spark.PaymentMethod.deposit => PaymentMethodType.onchain,
+      spark.PaymentMethod.withdraw => PaymentMethodType.onchain,
+      spark.PaymentMethod.unknown => PaymentMethodType.spark,
+    };
   }
 
   void _ensureConnected() {

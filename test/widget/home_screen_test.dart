@@ -9,9 +9,9 @@ import 'package:bolt21/services/community_node_service.dart';
 import 'package:bolt21/services/lightning_service.dart';
 import 'package:bolt21/services/lnd_service.dart';
 import 'package:bolt21/services/operation_state_service.dart';
+import 'package:bolt21/services/backends/lightning_backend.dart';
 import 'package:bolt21/utils/secure_string.dart';
 import 'package:bolt21/utils/theme.dart';
-import 'package:flutter_breez_liquid/flutter_breez_liquid.dart';
 
 // Mock classes
 class MockLightningService extends Mock implements LightningService {}
@@ -46,8 +46,8 @@ class TestWalletProvider extends ChangeNotifier implements WalletProvider {
   String? _error;
   String? _onChainAddress;
   String? _bolt12Offer;
-  GetInfoResponse? _info;
-  List<Payment> _payments = [];
+  UnifiedWalletInfo? _info;
+  List<UnifiedPayment> _payments = [];
   List<OperationState> _incompleteOperations = [];
   List<WalletMetadata> _wallets = [];
   WalletMetadata? _activeWallet;
@@ -61,7 +61,7 @@ class TestWalletProvider extends ChangeNotifier implements WalletProvider {
     int balanceSat = 10000,
     int pendingReceiveSat = 0,
     int pendingSendSat = 0,
-    List<Payment>? payments,
+    List<UnifiedPayment>? payments,
     List<OperationState>? incompleteOperations,
   }) {
     _isLoading = isLoading;
@@ -71,16 +71,10 @@ class TestWalletProvider extends ChangeNotifier implements WalletProvider {
     _incompleteOperations = incompleteOperations ?? [];
     _wallets = [WalletMetadata(id: 'test-id', name: 'Test Wallet', createdAt: DateTime.now())];
     _activeWallet = _wallets.first;
-    _info = GetInfoResponse(
-      walletInfo: WalletInfo(
-        balanceSat: BigInt.from(balanceSat),
-        pendingReceiveSat: BigInt.from(pendingReceiveSat),
-        pendingSendSat: BigInt.from(pendingSendSat),
-        pubkey: 'test_pubkey',
-        fingerprint: 'test_fingerprint',
-        assetBalances: [],
-      ),
-      blockchainInfo: BlockchainInfo(liquidTip: 100, bitcoinTip: 800000),
+    _info = UnifiedWalletInfo(
+      balanceSat: BigInt.from(balanceSat),
+      pendingReceiveSat: BigInt.from(pendingReceiveSat),
+      pendingSendSat: BigInt.from(pendingSendSat),
     );
   }
 
@@ -89,8 +83,8 @@ class TestWalletProvider extends ChangeNotifier implements WalletProvider {
   @override String? get error => _error;
   @override String? get onChainAddress => _onChainAddress;
   @override String? get bolt12Offer => _bolt12Offer;
-  @override GetInfoResponse? get info => _info;
-  @override List<Payment> get payments => _payments;
+  @override UnifiedWalletInfo? get info => _info;
+  @override List<UnifiedPayment> get payments => _payments;
   @override List<OperationState> get incompleteOperations => _incompleteOperations;
   @override bool get hasIncompleteOperations => _incompleteOperations.isNotEmpty;
   @override LightningService get lightningService => _lightningService;
@@ -100,14 +94,14 @@ class TestWalletProvider extends ChangeNotifier implements WalletProvider {
   @override bool get hasMultipleWallets => _wallets.length > 1;
   @override bool get paymentInProgress => false;
 
-  @override int get totalBalanceSats => _info?.walletInfo.balanceSat.toInt() ?? 0;
-  @override int get pendingReceiveSats => _info?.walletInfo.pendingReceiveSat.toInt() ?? 0;
-  @override int get pendingSendSats => _info?.walletInfo.pendingSendSat.toInt() ?? 0;
-  @override String? get nodeId => _info?.walletInfo.pubkey;
+  @override int get totalBalanceSats => _info?.balanceSat.toInt() ?? 0;
+  @override int get pendingReceiveSats => _info?.pendingReceiveSat.toInt() ?? 0;
+  @override int get pendingSendSats => _info?.pendingSendSat.toInt() ?? 0;
+  @override String? get nodeId => null;
 
   @override Future<void> loadWallets() async {}
-  @override Future<WalletMetadata> createWallet({required String name}) async => _activeWallet!;
-  @override Future<WalletMetadata> importWallet({required String name, required String mnemonic}) async => _activeWallet!;
+  @override Future<WalletMetadata> createWallet({required String name, LightningBackendType backendType = LightningBackendType.liquid}) async => _activeWallet!;
+  @override Future<WalletMetadata> importWallet({required String name, required String mnemonic, LightningBackendType backendType = LightningBackendType.liquid}) async => _activeWallet!;
   @override Future<void> switchWallet(String walletId) async {}
   @override Future<void> renameWallet(String walletId, String newName) async {}
   @override Future<void> deleteWallet(String walletId) async {}
@@ -149,16 +143,10 @@ class TestWalletProvider extends ChangeNotifier implements WalletProvider {
   }
 
   void setBalance(int sats) {
-    _info = GetInfoResponse(
-      walletInfo: WalletInfo(
-        balanceSat: BigInt.from(sats),
-        pendingReceiveSat: _info!.walletInfo.pendingReceiveSat,
-        pendingSendSat: _info!.walletInfo.pendingSendSat,
-        pubkey: 'test_pubkey',
-        fingerprint: 'test_fingerprint',
-        assetBalances: [],
-      ),
-      blockchainInfo: BlockchainInfo(liquidTip: 100, bitcoinTip: 800000),
+    _info = UnifiedWalletInfo(
+      balanceSat: BigInt.from(sats),
+      pendingReceiveSat: _info?.pendingReceiveSat,
+      pendingSendSat: _info?.pendingSendSat,
     );
     notifyListeners();
   }

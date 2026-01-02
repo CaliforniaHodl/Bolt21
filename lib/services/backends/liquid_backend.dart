@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_breez_liquid/flutter_breez_liquid.dart' as liquid;
-import '../config_service.dart';
 import '../../utils/secure_logger.dart';
 import 'lightning_backend.dart';
 
@@ -206,14 +205,12 @@ class LiquidBackend implements LightningBackend {
           invoice: input,
           amountSat: inv.amountMsat != null ? inv.amountMsat! ~/ BigInt.from(1000) : null,
           description: inv.description,
-          expiry: inv.expiry,
+          expiry: inv.expiry.toInt(),
         ),
       liquid.InputType_Bolt12Offer(offer: final offer) => Bolt12OfferInput(
           offer: input,
           description: offer.description,
-          minAmountSat: offer.minAmount?.amountMsat != null
-              ? offer.minAmount!.amountMsat! ~/ BigInt.from(1000)
-              : null,
+          minAmountSat: _extractAmountSat(offer.minAmount),
         ),
       liquid.InputType_BitcoinAddress(address: final addr) => BitcoinAddressInput(
           address: addr.address,
@@ -225,8 +222,8 @@ class LiquidBackend implements LightningBackend {
         ),
       liquid.InputType_LnUrlPay(data: final data) => LnurlPayInput(
           url: input,
-          minSat: data.minSendableSat,
-          maxSat: data.maxSendableSat,
+          minSat: data.minSendable ~/ BigInt.from(1000), // msat to sat
+          maxSat: data.maxSendable ~/ BigInt.from(1000), // msat to sat
           description: data.metadataStr,
         ),
       _ => UnknownInput(input),
@@ -302,22 +299,43 @@ class LiquidBackend implements LightningBackend {
           ? PaymentDirection.receive
           : PaymentDirection.send,
       state: switch (payment.status) {
+        liquid.PaymentState.created => PaymentState.pending,
         liquid.PaymentState.pending => PaymentState.pending,
         liquid.PaymentState.complete => PaymentState.complete,
         liquid.PaymentState.failed => PaymentState.failed,
-        _ => PaymentState.pending,
+        liquid.PaymentState.timedOut => PaymentState.failed,
+        liquid.PaymentState.refundable => PaymentState.failed,
+        liquid.PaymentState.refundPending => PaymentState.pending,
+        liquid.PaymentState.waitingFeeAcceptance => PaymentState.pending,
       },
       amountSat: payment.amountSat,
       feesSat: payment.feesSat,
-      timestamp: DateTime.fromMillisecondsSinceEpoch(payment.timestamp.toInt() * 1000),
-      description: payment.description,
+      timestamp: DateTime.fromMillisecondsSinceEpoch(payment.timestamp * 1000),
+      description: _extractPaymentDescription(payment.details),
       methodType: switch (payment.details) {
         liquid.PaymentDetails_Lightning() => PaymentMethodType.lightning,
         liquid.PaymentDetails_Liquid() => PaymentMethodType.liquid,
         liquid.PaymentDetails_Bitcoin() => PaymentMethodType.onchain,
-        _ => PaymentMethodType.lightning,
       },
     );
+  }
+
+  /// Extract description from payment details
+  String? _extractPaymentDescription(liquid.PaymentDetails details) {
+    return switch (details) {
+      liquid.PaymentDetails_Lightning(description: final desc) => desc,
+      liquid.PaymentDetails_Liquid(description: final desc) => desc,
+      liquid.PaymentDetails_Bitcoin(description: final desc) => desc,
+    };
+  }
+
+  /// Extract amount in sats from sealed Amount type
+  BigInt? _extractAmountSat(liquid.Amount? amount) {
+    if (amount == null) return null;
+    return switch (amount) {
+      liquid.Amount_Bitcoin(amountMsat: final msat) => msat ~/ BigInt.from(1000),
+      liquid.Amount_Currency() => null,
+    };
   }
 
   void _ensureConnected() {
